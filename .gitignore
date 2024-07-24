@@ -14,4 +14,8 @@ dist/
 build/
 *.egg-info/
 
+check_warnings.py 
+test_connection.py
+
+
 # These are files that flask docs recommend ignoring
