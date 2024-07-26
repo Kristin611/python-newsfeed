@@ -3,9 +3,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker 
 from dotenv import load_dotenv
-import logging
-from sqlalchemy.exc import OperationalError
-from retrying import retry 
+from flask import g 
 
 load_dotenv()
 
@@ -15,20 +13,32 @@ engine = create_engine(getenv('DB_URL'), echo=True, pool_pre_ping=True, pool_siz
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
+# initialize db connection & create tables in sqlalchemy
+def init_db(app):
+  print("Initializing database...")
+  Base.metadata.create_all(engine)
+  print("Database initialized.")
+
+  # when context is destroyed, run close_db function  
+  app.teardown_appcontext(close_db)
+
+# manages db connections: each call to get_db returns a new Session instance, which is important for ensuring that database operations are executed within the context of a transaction and that each operation has its own session. By creating a new Session for each operation, you ensure that each session operates independently, avoiding conflicts between concurrent database interactions. However, cue application context, g. 
+def get_db():
+  if 'db' not in g:
+    # store db connection in app context; using application context (g) so it return the connection from the g object instead of creating a new Session instance each time.
+    g.db = Session()
+
+  return g.db   
+
+# The pop() method attempts to find and remove db from the g object. If db exists (that is, db doesn't equal None), then db.close() will end the connection.
+def close_db(e=None):
+  db = g.pop('db', None)
+
+  if db is not None:
+    db.close()
 
 
-# @retry(stop_max_attempt_number=5, wait_fixed=2000)
-# def run_transaction(session, func, *args, **kwargs):
-#     try: 
-#         result = func(session, *args, **kwargs)
-#         session.commit()
-#         return result
-#     except OperationalError as e:
-#         session.rollback()
-#         print(f"OperationalError occurred: {e}. Retrying...")
-#         raise
-#     finally:
-#         session.close()
+
 
 # The engine variable manages the overall connection to the database.
 # The Session variable generates temporary connections for performing create, read, update, and delete (CRUD) operations.

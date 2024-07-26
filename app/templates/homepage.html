@@ -9,23 +9,3 @@
   {% endfor %}
 </ol>
 {% endblock %}
-
-<!-- Explanation of Jinja2's Template Inheritance below -->
-
-<!-- {% extends "layout/main.html" %}: This line indicates that this template extends a base/parent template called layout/main.html. Template inheritance allows you to define a common structure (like a layout) in one template and reuse it across multiple templates. The main.html template would typically contain the HTML structure that is common across multiple pages, such as the header, footer, and navigation. -->
-  <!-- The base template defines the common structure and content that will be shared across multiple pages. It typically includes placeholders (blocks), i.e.,{% block body %}{% endblock %}, that can be filled in by child templates. -->
-      <!-- other types of blocks include block head {% block head %}{% endblock %}, block navbar {% block navbar %}{% endblock %}, block footer {% block footer %}{% endblock %}, block scripts {% block scripts %}{% endblock %}, block sidebar {% block sidebar %}{% endblock %}, etc.  -->
-
-<!-- Child template: A child template extends the base template and overrides the blocks defined in the base template to insert specific content. This way, the child template can reuse the common structure defined in the base template while providing unique content for each page. -->
-
-<!-- Looping through Ordered List of Posts -->
-
-<!-- {% for post in posts %} and {% endfor %}: These tags define a for loop that iterates over a collection called posts. The posts variable is expected to be passed to the template from the Flask view function, containing a list of post objects. -->
-
-<!-- {% include "partials/post-info.html" %}: This tag includes another template called partials/post-info.html within each list item. The post-info.html template can be a partial template that contains the HTML structure for displaying an individual post's information. By using {% include %}, you can break down complex templates into smaller, reusable components. -->
-
-<!-- Partial Templates Explanation -->
-<!-- Partial templates, also known as template includes or template fragments, are smaller pieces of reusable content that can be included in other templates using the {% include %} directive. 
- Purpose: The main purpose of partial templates is to break down the template into smaller, reusable components, which helps in managing and maintaining the template code more efficiently.
- Partial templates typically do not use {% extends %}.
--->
