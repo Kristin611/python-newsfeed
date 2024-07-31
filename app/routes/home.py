@@ -1,6 +1,6 @@
 # home.py is a standalone file that is a module within routes package, i.e., it is a module that belongs to the routes package
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session, redirect 
 from app.models import Post
 from app.db import get_db
 
@@ -16,11 +16,15 @@ def index():
     # get all posts
     db = get_db()
     posts = db.query(Post).order_by(Post.created_at.desc()).all()
-    return render_template('homepage.html', posts=posts)
+    return render_template('homepage.html', posts=posts, loggedIn=session.get('loggedIn'))
 
 @bp.route('/login')
 def login():
-    return render_template('login.html')
+    # not logged in yet
+    if session.get('loggedIn') is None:
+        return render_template('login.html')
+    
+    return redirect('/dashboard')
 
 # id is the parameter in this route
 @bp.route('/post/<id>')
@@ -28,7 +32,7 @@ def single(id):
     # get single post by id
     db = get_db()
     post = db.query(Post).filter(Post.id == id).one()
-    return render_template('single-post.html', post=post)
+    return render_template('single-post.html', post=post, loggedIn=session.get('loggedIn'))
 
 # Blueprint: This is a Flask feature that allows you to organize your application into modular components. Blueprints are a way to structure your Flask application into smaller and more manageable parts.
 # render_template: This function is used to render HTML templates with the given context. It looks for HTML files in the templates folder by default.
